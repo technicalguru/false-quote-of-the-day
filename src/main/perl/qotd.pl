@@ -4,6 +4,18 @@ use SOAP::Transport::HTTP;
 use Config::Simple;
 use DBI;
 
+# Load DB config
+my $CONFIG   = new Config::Simple('/var/www/vhosts/ralph-schuster.eu/qotd/qotd.ini');
+my $DBNAME   = $CONFIG->param('DBNAME');
+my $DBLOGIN  = $CONFIG->param('DBLOGIN');
+my $DBPASSWD = $CONFIG->param('DBPASSWD');
+my $DBHOST   = $CONFIG->param('DBHOST');
+my $DBPORT   = $CONFIG->param('DBPORT');
+
+# Access DB
+my $DSN = "DBI:mysql:database=$DBNAME;host=$DBHOST;port=$DBPORT";
+my $DBH = DBI->connect("dbi:mysql:$DSN", $DBLOGIN, $DBPASSWD) or die "Cannot connect to database...\n$DBI::errstr\n";
+
 # Dispatch the SOAP request
 SOAP::Transport::HTTP::Apache
    ->dispatch_to('Quote')
@@ -18,18 +30,6 @@ sub getquote {
 	my $rnr;
 	my ($quote, $author, $numQuotes, $row);
 	
-# Load DB config
-my $CONFIG   = new Config::Simple('/var/www/vhosts/ralph-schuster.eu/qotd/qotd.ini');
-my $DBNAME   = $CONFIG->param('DBNAME');
-my $DBLOGIN  = $CONFIG->param('DBLOGIN');
-my $DBPASSWD = $CONFIG->param('DBPASSWD');
-my $DBHOST   = $CONFIG->param('DBHOST');
-my $DBPORT   = $CONFIG->param('DBPORT');
-
-# Access DB
-my $DSN = "DBI:mysql:database=$DBNAME;host=$DBHOST;port=$DBPORT";
-my $DBH = DBI->connect("dbi:mysql:$DSN", $DBLOGIN, $DBPASSWD) or die "Cannot connect to database...\n$DBI::errstr\n";
-
 	# TODO The quote is selected randomly, have it selected by day
 	
 	# How many quotes do we have?
