@@ -55,26 +55,3 @@ sub getquote {
 	return { 'quote' => $quote, 'author' => $author};
 	
 }
-
-sub getquote2 {
-	my @quotes;
-	my $rnr;
-	my ($quote, $author, $numQuotes, $row);
-
-	# This would be from file / Kept for references
-	open(QTS, "</var/www/vhosts/ralph-schuster.eu/qotd/quotes.txt");
-
-	while(<QTS>) {
-		chomp();
-		push(@quotes,$_);
-	}
-	
-	# Select a quote
-	# random via array length
-	$rnr = int(rand(@quotes - 1));
-	
-	($quote,$author) = split(/\#/,$quotes[$rnr]);
-	
-	# return quote
-	return ($quote,$author);
-}
