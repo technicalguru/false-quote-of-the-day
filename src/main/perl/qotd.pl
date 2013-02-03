@@ -2,21 +2,10 @@
 	 
 use SOAP::Transport::HTTP;
 use Config::Simple;
-
-# Load DB config
-my $CONFIG   = new Config::Simple('qotd.ini');
-my $DBNAME   = $CONFIG->param('DBNAME');
-my $DBLOGIN  = $CONFIG->param('DBLOGIN');
-my $DBPASSWD = $CONFIG->param('DBPASSWD');
-my $DBHOST   = $CONFIG->param('DBHOST');
-my $DBPORT   = $CONFIG->param('DBPORT');
-
-# Access DB
-my $DSN = "DBI:mysql:database=$DBNAME;host=$DBHOST;port=$DBPORT";
-my $DBH = DBI->connect("dbi:mysql:$DSN", $DBUSER, $DBPASSWD) or die "Cannot connect to database...\n$DBI::errstr\n";
+use DBI;
 
 # Dispatch the SOAP request
-SOAP::Transport::HTTP::CGI
+SOAP::Transport::HTTP::Apache
    ->dispatch_to('Quote')
    ->handle;
  
@@ -27,17 +16,28 @@ sub getquote {
 	
 	my @quotes;
 	my $rnr;
-	my $quote, $author, $numQuotes, $row;
+	my ($quote, $author, $numQuotes, $row);
 	
+# Load DB config
+my $CONFIG   = new Config::Simple('/var/www/vhosts/ralph-schuster.eu/qotd/qotd.ini');
+my $DBNAME   = $CONFIG->param('DBNAME');
+my $DBLOGIN  = $CONFIG->param('DBLOGIN');
+my $DBPASSWD = $CONFIG->param('DBPASSWD');
+my $DBHOST   = $CONFIG->param('DBHOST');
+my $DBPORT   = $CONFIG->param('DBPORT');
+
+# Access DB
+my $DSN = "DBI:mysql:database=$DBNAME;host=$DBHOST;port=$DBPORT";
+my $DBH = DBI->connect("dbi:mysql:$DSN", $DBLOGIN, $DBPASSWD) or die "Cannot connect to database...\n$DBI::errstr\n";
+
 	# TODO The quote is selected randomly, have it selected by day
 	
 	# How many quotes do we have?
 	my $sth = $DBH->prepare("SELECT COUNT(*) AS cnt FROM qotd_quotes");
 	$sth->execute();
 	if ($row = $sth->fetchrow_hashref()) {
-       $numQuotes = $row['cnt'];
+		$numQuotes = $$row{'cnt'};
 	}
-	$sth->close();
 	
 	$rnr = int(rand($numQuotes - 1));
 	
@@ -45,28 +45,36 @@ sub getquote {
 	$sth = $DBH->prepare("SELECT * FROM qotd_quotes ORDER BY id LIMIT $rnr, 1");
 	$sth->execute();
 	if ($row = $sth->fetchrow_hashref()) {
-       $qotd = $row;
+		$qotd = $row;
 	}
-	$sth->close();
 
-	$quote = $qotd['quote'];
-	$author = $qotd['author'];
+	$quote = SOAP::Data->type(string => $$qotd{'quote'});
+	$author = SOAP::Data->type(string => $$qotd{'author'});
 	
-	# This would be from file / Kept for references
-	#open(QTS, "<quotes.txt");
+	# return quote
+	return { 'quote' => $quote, 'author' => $author};
+	
+}
 
-	#while(<QTS>) {
-	#	chomp();
-	#	push(@quotes,$_);
-	#}
+sub getquote2 {
+	my @quotes;
+	my $rnr;
+	my ($quote, $author, $numQuotes, $row);
+
+	# This would be from file / Kept for references
+	open(QTS, "</var/www/vhosts/ralph-schuster.eu/qotd/quotes.txt");
+
+	while(<QTS>) {
+		chomp();
+		push(@quotes,$_);
+	}
 	
 	# Select a quote
 	# random via array length
-	#$rnr = int(rand(@quotes - 1));
+	$rnr = int(rand(@quotes - 1));
 	
-	#($quote,$author) = split('#',@quotes[$rnr]);
+	($quote,$author) = split(/\#/,$quotes[$rnr]);
 	
 	# return quote
 	return ($quote,$author);
-	
 }

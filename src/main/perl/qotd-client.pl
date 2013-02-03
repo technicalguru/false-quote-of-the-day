@@ -2,10 +2,12 @@
 
 use SOAP::Lite;
 
+#SOAP::Lite->import(trace => debug);
+
 $url = shift;
 if (!$url) {
 	print "Usage: qotd-client.pl <url>\n";
-	print "       e.g. qotd-client.pl http://qotd.ralph-schuster.eu/qotd/qotd.pl\n");
+	print "       e.g. qotd-client.pl http://qotd.ralph-schuster.eu/qotd/qotd.pl\n";
 	exit 1;
 }
 
@@ -13,10 +15,15 @@ if (!$url) {
 
 $result =  SOAP::Lite
         -> uri("http://$domain/Quote")
-        -> proxy('$url')
+        -> proxy("$url")
         -> getquote();
-        
-@res = $result->paramsout;
-$res = $result->result;
+       
+unless ($result->fault) {
+	@res = $result->paramsout;
+	$res = $result->result;
 
-print("\"".$res."\"\n\t\t\t(".$res[0].")\n");
+	print("\"".$res."\"\n\t\t\t(".$res[0].")\n");
+
+} else {
+	print join ', ', $result->faultcode, $result->faultstring;
+}
