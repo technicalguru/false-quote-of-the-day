@@ -28,7 +28,8 @@ function getquoteAjax() /*Add parameters and what not*/ {
 		success: function(data, status, req, xml, xmlHttpRequest, responseXML) { 
 			var quote  = $(data).find('quote').text(); 
 			var author = $(data).find('author').text(); 
-			alert(quote+' ('+author+')');
+			$('#fqotd-quote').text(quote);
+			$('#fqotd-author').text('('+author+')');
 		}, 
 		error: function(data, status, req){ 
 			alert(req.responseText + " " + status);
