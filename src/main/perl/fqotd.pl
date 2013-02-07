@@ -29,9 +29,9 @@ print <<EOF
 </head>
 <body style="color: $color; $fontdef border: 0; padding: 0; margin: 0; " onLoad="getquoteAjax();">
 	<table id="fqotd" style="$fontdef border: none; text-align: center; width: 100%; height: 100%;">
-		<tr><td valign="middle">
+		<tr><td valign="middle"><a href="http://qotd.ralph-schuster.eu/" target="_top" style="text-decoration:none !important; color: $color;">
 		<span id="fqotd-quote" style="font-style: italic; vertical-align: middle;"><img src="ajax-loader.gif" alt="Loading..." title="Loading..."/></span>
-		<span id="fqotd-author" style="vertical-align: middle;"></span>
+		<span id="fqotd-author" style="vertical-align: middle;"></span></a>
 		</td></tr>
 	</table>
 </body>
