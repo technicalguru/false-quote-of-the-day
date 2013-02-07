@@ -2,13 +2,63 @@
 <head>
     <title>Quote SOAP Test</title>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js" type="text/javascript" charset="utf-8"></script>
-    <script type="text/javascript" language="JavaScript" src="quote.js"></script>
+    <script type="text/javascript">
+	function generateCode() {
+		var foreground  = $('#foreground').val();
+		var background  = $('#background').val();
+		var bordercolor = $('#border-color').val();
+		var borderwidth = $('#border-width').val();
+		var corner      = $('#corner-radius').val();
+		var height      = $('#height').val();
+		var width       = $('#width').val();
+
+		var snippet = '<iframe src="http://qotd.ralph-schuster.eu/fqotd.pl?color=%23'+foreground.substring(1)+'" style="border: '+borderwidth+' solid '+bordercolor+'; background: '+background+'; height: '+height+'; width: '+width+'; text-align: center; vertical-align: middle !important; -moz-border-radius: '+corner+'; border-radius: '+corner+';"></iframe>';
+		$('#snippet').val(snippet);
+		$('#preview').html(snippet);
+	}
+
+    </script>
 </head>
-<body>
-    <form name="Demo" action="" method="post">
-        <div>
-            <input type="button" value="Get Quote!" onclick="getquoteAjax();" />
-        </div>
-    </form>
-</body>
+<body onLoad="generateCode();">
+<center>
+<h1>False Quote of the Day</h1>
+<div style="width: 1000px;">
+<!--
+<iframe src="http://qotd.ralph-schuster.eu/fqotd.html" style="border: 1px solid #999; padding: 5px; background: #c3e0ee; height: 40px; width: 100%; text-align: center; vertical-align: middle !important; -moz-border-radius: 15px; border-radius: 15px;"></iframe>
+-->
+<form id="generateForm">
+	<table style="margin: 10px; border: 1px solid #999; padding: 5px; background: #eeeeee; -moz-border-radius: 15px; border-radius: 15px;">
+		<tr>
+			<td>Foreground:</td>
+			<td><input type="text" size="6" id="foreground" value="#000000"/></td>
+			<td>Background:</td>
+			<td><input type="text" size="6" id="background" value="#c3e0ee"/></td>
+		</tr>
+		<tr>
+			<td>Border Color:</td>
+			<td><input type="text" size="6" id="border-color" value="#999999"/></td>
+			<td>Border Width:</td>
+			<td><input type="text" size="6" id="border-width" value="1px"/></td>
+			<td>Corner Radius:</td>
+			<td><input type="text" size="6" id="corner-radius" value="15px"/></td>
+		</tr>
+		<tr>
+			<td>Height:</td>
+			<td><input type="text" size="6" id="height" value="50px"/></td>
+			<td>Width:</td>
+			<td><input type="text" size="6" id="width" value="100%"/></td>
+		</tr>
+		<tr>
+			<td align="center"><input type="button" value="Generate" onClick="generateCode(); return false;"/></td>
+		</tr>
+		<tr>
+			<td colspan="6"><textarea id="snippet" readonly="readonly" style="width: 100%; background: #eeeeee; border: 1px solid #999;" rows="5"></textarea></td>
+		</tr>
+	</table>
+</form>
+<p><b>Preview</b></p>
+<div id="preview"></div>
+</div>
+</center>
 <html>
+
