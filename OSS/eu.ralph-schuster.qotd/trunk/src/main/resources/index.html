@@ -13,8 +13,9 @@
 		var width       = $('#width').val();
 		var fontsize    = $('#fontsize').val();
 		var fontfamily  = $('#fontfamily').val();
+		var padding     = $('#padding').val();
 
-		var snippet = '<iframe src="http://qotd.ralph-schuster.eu/fqotd.pl?color='+foreground.substring(1)+'&fontsize='+fontsize+'&fontfamily='+fontfamily+'" style="border: '+borderwidth+' solid '+bordercolor+'; background: '+background+'; height: '+height+'; width: '+width+'; text-align: center; vertical-align: middle !important; -moz-border-radius: '+corner+'; border-radius: '+corner+';"></iframe>';
+		var snippet = '<iframe src="http://qotd.ralph-schuster.eu/fqotd.pl?color='+foreground.substring(1)+'&fontsize='+fontsize+'&fontfamily='+fontfamily+'" style="border: '+borderwidth+' solid '+bordercolor+'; background: '+background+'; padding: '+padding+'; height: '+height+'; width: '+width+'; text-align: center; vertical-align: middle !important; -moz-border-radius: '+corner+'; border-radius: '+corner+';"></iframe>';
 		$('#snippet').val(snippet);
 		$('#preview').html(snippet);
 	}
@@ -69,6 +70,9 @@
 		</tr>
 		<tr>
 			<td align="center"><input type="button" value="Generate" onClick="generateCode(); return false;"/></td>
+			<td colspan="3"/>
+			<td>Insets:</td>
+			<td><input type="text" size="6" id="padding" value="0px"/></td>
 		</tr>
 		<tr>
 			<td colspan="6"><textarea id="snippet" readonly="readonly" style="width: 100%; background: #eeeeee; border: 1px solid #999;" rows="5"></textarea></td>
