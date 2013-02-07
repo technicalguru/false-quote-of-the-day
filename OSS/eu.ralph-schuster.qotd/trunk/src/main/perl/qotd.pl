@@ -34,7 +34,7 @@ sub getquote {
 	my %SETTINGS = ();
 	my $sth = $DBH->prepare("SELECT * FROM qotd_settings");
 	$sth->execute();
-	if ($row = $sth->fetchrow_hashref()) {
+	while ($row = $sth->fetchrow_hashref()) {
 		$SETTINGS{$$row{'name'}} = $$row{'value'};
 	}
 	
