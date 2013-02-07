@@ -7,7 +7,7 @@ use SOAP::Lite;
 $url = shift;
 if (!$url) {
 	print "Usage: qotd-client.pl <url>\n";
-	print "       e.g. qotd-client.pl http://qotd.ralph-schuster.eu/qotd/qotd.pl\n";
+	print "       e.g. qotd-client.pl http://qotd.ralph-schuster.eu/qotd.pl\n";
 	exit 1;
 }
 
@@ -19,10 +19,10 @@ $result =  SOAP::Lite
         -> getquote();
        
 unless ($result->fault) {
-	@res = $result->paramsout;
-	$res = $result->result;
+	$quote = $result->valueof('//quote/');
+	$author = $result->valueof('//author/');
 
-	print("\"".$res."\"\n\t\t\t(".$res[0].")\n");
+	print("\"".$quote."\"\n\t\t\t(".$author.")\n");
 
 } else {
 	print join ', ', $result->faultcode, $result->faultstring;

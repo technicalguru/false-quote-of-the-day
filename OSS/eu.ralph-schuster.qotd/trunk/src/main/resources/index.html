@@ -11,8 +11,10 @@
 		var corner      = $('#corner-radius').val();
 		var height      = $('#height').val();
 		var width       = $('#width').val();
+		var fontsize    = $('#fontsize').val();
+		var fontfamily  = $('#fontfamily').val();
 
-		var snippet = '<iframe src="http://qotd.ralph-schuster.eu/fqotd.pl?color='+foreground.substring(1)+'" style="border: '+borderwidth+' solid '+bordercolor+'; background: '+background+'; height: '+height+'; width: '+width+'; text-align: center; vertical-align: middle !important; -moz-border-radius: '+corner+'; border-radius: '+corner+';"></iframe>';
+		var snippet = '<iframe src="http://qotd.ralph-schuster.eu/fqotd.pl?color='+foreground.substring(1)+'&fontsize='+fontsize+'&fontfamily='+fontfamily+'" style="border: '+borderwidth+' solid '+bordercolor+'; background: '+background+'; height: '+height+'; width: '+width+'; text-align: center; vertical-align: middle !important; -moz-border-radius: '+corner+'; border-radius: '+corner+';"></iframe>';
 		$('#snippet').val(snippet);
 		$('#preview').html(snippet);
 	}
@@ -33,6 +35,29 @@
 			<td><input type="text" size="6" id="foreground" value="#000000"/></td>
 			<td>Background:</td>
 			<td><input type="text" size="6" id="background" value="#c3e0ee"/></td>
+			<td>Font Size (pt):</td>
+			<td><input type="text" size="6" id="fontsize" value=""/></td>
+		</tr>
+		<tr>
+			<td>Height:</td>
+			<td><input type="text" size="6" id="height" value="50px"/></td>
+			<td>Width:</td>
+			<td><input type="text" size="6" id="width" value="100%"/></td>
+			<td>Font:</td>
+			<td>
+				<select id="fontfamily">
+					<option selected="selected" value="">(Default)</option>
+					<option value="cursive">cursive</option>
+					<option value="Arial">Arial</option>
+					<option value="monospace">monospace</option>
+					<option value="sans-serif">sans-serif</option>
+					<option value="serif">serif</option>
+					<option value="Tahoma">Tahoma</option>
+					<option value="Times">Times</option>
+					<option value="Times+New+Roman">Times New Roman</option>
+					<option value="Verdana">Verdana</option>
+				</select>
+			</td>
 		</tr>
 		<tr>
 			<td>Border Color:</td>
@@ -41,12 +66,6 @@
 			<td><input type="text" size="6" id="border-width" value="1px"/></td>
 			<td>Corner Radius:</td>
 			<td><input type="text" size="6" id="corner-radius" value="15px"/></td>
-		</tr>
-		<tr>
-			<td>Height:</td>
-			<td><input type="text" size="6" id="height" value="50px"/></td>
-			<td>Width:</td>
-			<td><input type="text" size="6" id="width" value="100%"/></td>
 		</tr>
 		<tr>
 			<td align="center"><input type="button" value="Generate" onClick="generateCode(); return false;"/></td>
