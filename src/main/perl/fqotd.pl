@@ -18,7 +18,7 @@ print <<EOF
 <body style="color: $color; border: 0; padding: 0; margin: 0; " onLoad="getquoteAjax();">
 	<table id="fqotd" style="border: none; text-align: center; width: 100%; height: 100%;">
 		<tr><td valign="middle">
-		<span id="fqotd-quote" style="font-style: italic; vertical-align: middle;"></span>
+		<span id="fqotd-quote" style="font-style: italic; vertical-align: middle;"><img src="ajax-loader.gif" alt="Loading..." title="Loading..."/></span>
 		<span id="fqotd-author" style="vertical-align: middle;"></span>
 		</td></tr>
 	</table>
