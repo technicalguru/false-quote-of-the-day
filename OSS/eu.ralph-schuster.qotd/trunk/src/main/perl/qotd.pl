@@ -4,17 +4,17 @@ use SOAP::Transport::HTTP;
 use Config::Simple;
 use DBI;
 
-# Load DB config
-my $CONFIG   = new Config::Simple('/var/www/vhosts/ralph-schuster.eu/qotd/qotd.ini');
-my $DBNAME   = $CONFIG->param('DBNAME');
-my $DBLOGIN  = $CONFIG->param('DBLOGIN');
-my $DBPASSWD = $CONFIG->param('DBPASSWD');
-my $DBHOST   = $CONFIG->param('DBHOST');
-my $DBPORT   = $CONFIG->param('DBPORT');
+	# Load DB config
+	my $CONFIG   = new Config::Simple('/var/www/vhosts/ralph-schuster.eu/qotd/qotd.ini');
+	my $DBNAME   = $CONFIG->param('DBNAME');
+	my $DBLOGIN  = $CONFIG->param('DBLOGIN');
+	my $DBPASSWD = $CONFIG->param('DBPASSWD');
+	my $DBHOST   = $CONFIG->param('DBHOST');
+	my $DBPORT   = $CONFIG->param('DBPORT');
 
-# Access DB
-my $DSN = "DBI:mysql:database=$DBNAME;host=$DBHOST;port=$DBPORT";
-my $DBH = DBI->connect("dbi:mysql:$DSN", $DBLOGIN, $DBPASSWD) or die "Cannot connect to database...\n$DBI::errstr\n";
+	# Access DB
+	my $DSN = "DBI:mysql:database=$DBNAME;host=$DBHOST;port=$DBPORT";
+	my $DBH = DBI->connect("dbi:mysql:$DSN", $DBLOGIN, $DBPASSWD) or die "Cannot connect to database...\n$DBI::errstr\n";
 
 # Dispatch the SOAP request
 SOAP::Transport::HTTP::Apache
@@ -28,30 +28,73 @@ sub getquote {
 	
 	my @quotes;
 	my $rnr;
-	my ($quote, $author, $numQuotes, $row);
+	my ($quote, $author, $maxId, $row);
 	
-	# TODO The quote is selected randomly, have it selected by day
+	# load the settings
+	my %SETTINGS = ();
+	my $sth = $DBH->prepare("SELECT * FROM qotd_settings");
+	$sth->execute();
+	if ($row = $sth->fetchrow_hashref()) {
+		$SETTINGS{$$row{'name'}} = $$row{'value'};
+	}
 	
 	# How many quotes do we have?
-	my $sth = $DBH->prepare("SELECT COUNT(*) AS cnt FROM qotd_quotes");
+	$sth = $DBH->prepare("SELECT MAX(id) AS cnt FROM qotd_quotes");
 	$sth->execute();
 	if ($row = $sth->fetchrow_hashref()) {
-		$numQuotes = $$row{'cnt'};
-	}
-	
-	$rnr = int(rand($numQuotes - 1));
-	
-	# Select the quote from DB
-	$sth = $DBH->prepare("SELECT * FROM qotd_quotes ORDER BY id LIMIT $rnr, 1");
-	$sth->execute();
-	if ($row = $sth->fetchrow_hashref()) {
-		$qotd = $row;
+		$maxId = $$row{'cnt'};
 	}
 
-	$quote = SOAP::Data->type(string => $$qotd{'quote'});
-	$author = SOAP::Data->type(string => $$qotd{'author'});
+	# check whether the quote was already selected for today
+	my $id = 0;
+	my @T = localtime(time);
+	my $today = sprintf("%04d%02d%02d", $T[5]+1900, $T[4]+1, $T[3]);
+	if ($SETTINGS{'currentDay'} eq $today) {
+		$id = $SETTINGS{'currentId'};
+		$sth = $DBH->prepare("SELECT * FROM qotd_quotes WHERE id=$id");
+		$sth->execute();
+		if ($row = $sth->fetchrow_hashref()) {
+			$quote  = $$row{'quote'};
+			$author = $$row{'author'};
+		}
+	} else {
+		# Find a new quote
+		if ($SETTINGS{'currentDay'}) {
+			$id = $SETTINGS{'currentId'};
+		} else {
+			$id = 0;
+		}
+		while (!$quote) {
+			$id++;
+			$id = 1 if $id > $maxId;
+			$sth = $DBH->prepare("SELECT * FROM qotd_quotes WHERE id=$id");
+			$sth->execute();
+			if ($row = $sth->fetchrow_hashref()) {
+				$quote  = $$row{'quote'};
+				$author = $$row{'author'};
+			}
+		}
+
+		# Save settings for new quote
+		if ($SETTINGS{'currentDay'}) {
+			$sth = $DBH->prepare("UPDATE qotd_settings SET value='$today' WHERE name='currentDay'");
+			$sth->execute();
+			$sth = $DBH->prepare("UPDATE qotd_settings SET value='$id' WHERE name='currentId'");
+			$sth->execute();
+		} else {
+			$sth = $DBH->prepare("INSERT INTO qotd_settings (name, value) VALUES ('currentDay', '$today')");
+			$sth->execute();
+			$sth = $DBH->prepare("INSERT INTO qotd_settings (name, value) VALUES ('currentId', '$id')");
+			$sth->execute();
+		}
+	}
+
+	# Sanitize for SOAP
+	$quote = SOAP::Data->type(string => $quote);
+	$author = SOAP::Data->type(string => $author);
 	
 	# return quote
 	return { 'quote' => $quote, 'author' => $author};
 	
 }
+
