@@ -7,6 +7,7 @@ my $q = new CGI();
 
 print $q->header;
 my $color = $q->param("color");
+$color = '000000' if $color !~/^[0-9a-f]{6}$/i;
 print <<EOF
 <html>
 <head>
