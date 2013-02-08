@@ -17,4 +17,8 @@ foreach ($lines as $line) {
     echo "     " . $key . " == \&gt; " . $value . "<br>\n";
 }
 
+define('CONSUMER_KEY', $CONFIG['CONSUMER_KEY']);
+define('CONSUMER_SECRET', $CONFIG['CONSUMER_SECRET']);
+define('ACCESS_TOKEN', $CONFIG['ACCESS_TOKEN']);
+define('ACCESS_TOKEN_SECRET', $CONFIG['ACCESS_TOKEN_SECRET']);
 define('OAUTH_CALLBACK', 'http://qotd.ralph-schuster.eu/callback.php');
