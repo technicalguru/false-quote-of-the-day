@@ -5,6 +5,7 @@ error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
 require_once('config.php');
 require_once('twitteroauth.php');
+include_once("fb/facebook.php");
 
 // Get DB connection
 $con = mysql_connect(DBHOST, DBLOGIN, DBPASSWD);
@@ -33,30 +34,61 @@ $connection = new TwitterOAuth(
 	ACCESS_TOKEN_SECRET
 );
 
-if (!$connection->token) {
-	echo "error while connecting to Twitter: ".$connection->error."<br/>";
+// Connect to Facebook
+//Call Facebook API
+$facebook = new Facebook(array(
+	'appId'  => FB_APP_ID,
+	'secret' => FB_APP_SECRET
+));
+$facebook->setAccessToken(FB_ACCESS_TOKEN);
+$fbuser = $facebook->getUser();
+
+if ($connection->error || !$fbuser) {
+	if ($connection->error) echo "error while connecting to Twitter: ".$connection->error."<br/>";
+	if (!$fbuser) echo "error while connecting to Facebook <br/>";
 	$tweetError = 1;
 } else {
 	$text = getTweetText($con);
 
 	if ($text) {
+		echo "FQOTD: ".$text."<br/>";
+
+		// Twitter it
 		$result = $connection->post('statuses/update', array('status' => sanitize($text)));
 		if ($result->error) {
-			echo "error while tweeting: ".$result->error;
+			echo "error while tweeting: ".$result->error."<br/>";
 			$tweetError = 1;
-		} else {
+		}
+
+		if (!$tweetError) {
+			echo "Tweeted<br/>";
 			// Save the day that we tweeted
 			$today = date("Ymd");
 			mysql_query("UPDATE qotd_settings SET value='$today' WHERE name='lastTweet'", $con);
 			if (!$result) {
-				echo "error while saving tweet: ".mysql_error();
+				echo "error while saving tweet: ".mysql_error()."<br/>";
 			}
 		}
-	}
-}
-echo $text."<br/>";
 
-if ($text && !$tweetError) {
+		// Post it in Facebook
+		if (!$tweetError) {
+			$msg_body = array(
+				'message' => sanitize($text)
+			);
+
+			$post_url = '/'.FB_PAGE_ID.'/feed';
+			try {
+				$postResult = $facebook->api($post_url, 'post', $msg_body );
+				echo "Posted on Facebook<br/>";
+			} catch (FacebookApiException $e) {
+				echo "error while posting to Facebook: ". $e->getMessage();
+				$tweetError = 1;
+		        }
+		}
+
+	} else {
+		echo "Already posted today<br/>";
+	}
 }
 
 // Close DB
