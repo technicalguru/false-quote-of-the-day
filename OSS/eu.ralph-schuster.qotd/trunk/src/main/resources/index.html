@@ -1,6 +1,13 @@
 <html>
 <head>
     <title>False Quote of the Day</title>
+<meta property="og:title" content="False Quote of the Day" />
+<meta property="og:type" content="non_profit" />
+<meta property="og:url" content="https://www.facebook.com/FalseQuoteOfTheDay" />
+<meta property="og:image" content="" />
+<meta property="og:site_name" content="False Quote of the Day" />
+<meta property="fb:admins" content="100002245462255" />
+
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript">
 	function generateCode() {
@@ -23,9 +30,18 @@
     </script>
 </head>
 <body onLoad="generateCode();">
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/de_DE/all.js#xfbml=1&appId=284450145016296";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
 <center>
 <h1>False Quote of the Day</h1>
-<div style="width: 1000px;">
+<div style="width: 1000px; vertical-align: middle;">
+<div class="fb-like" data-href="https://www.facebook.com/FalseQuoteOfTheDay" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
 <a href="https://twitter.com/fqotd" class="twitter-follow-button" data-show-count="false" data-lang="de" data-size="large" data-dnt="true">@fqotd folgen</a>
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 </div>
