@@ -1,15 +1,15 @@
 <html>
 <head>
     <title>False Quote of the Day</title>
-<meta property="og:title" content="False Quote of the Day" />
-<meta property="og:type" content="non_profit" />
-<meta property="og:url" content="https://www.facebook.com/FalseQuoteOfTheDay" />
-<meta property="og:image" content="" />
-<meta property="og:site_name" content="False Quote of the Day" />
-<meta property="fb:admins" content="100002245462255" />
-
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js" type="text/javascript" charset="utf-8"></script>
-    <script type="text/javascript">
+	<meta property="og:title" content="False Quote of the Day" />
+	<meta property="og:type" content="non_profit" />
+	<meta property="og:url" content="https://www.facebook.com/FalseQuoteOfTheDay" />
+	<meta property="og:image" content="" />
+	<meta property="og:site_name" content="False Quote of the Day" />
+	<meta property="fb:admins" content="100002245462255" />
+	<link href="http://qotd.ralph-schuster.eu/rss.xml" rel="alternate" type="application/rss+xml" title="False Quote of the Day RSS Feed" />
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
 	function generateCode() {
 		var foreground  = $('#foreground').val();
 		var background  = $('#background').val();
@@ -27,9 +27,9 @@
 		$('#preview').html(snippet);
 	}
 
-    </script>
+	</script>
 </head>
-<body onLoad="generateCode();">
+<body style="background: url(fqotd-main.gif); background-repeat:no-repeat; background-attachment:fixed; background-position: center top;" onLoad="generateCode();">
 <div id="fb-root"></div>
 <script>(function(d, s, id) {
   var js, fjs = d.getElementsByTagName(s)[0];
@@ -40,17 +40,20 @@
 }(document, 'script', 'facebook-jssdk'));</script>
 <center>
 <h1>False Quote of the Day</h1>
-<div style="width: 1000px; vertical-align: middle;">
-<div class="fb-like" data-href="https://www.facebook.com/FalseQuoteOfTheDay" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
-<a href="https://twitter.com/fqotd" class="twitter-follow-button" data-show-count="false" data-lang="de" data-size="large" data-dnt="true">@fqotd folgen</a>
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-</div>
-<div style="width: 1000px;">
+<table style="width: 1000px; vertical-align: middle; border: none;">
+<tr>
+<td style="width: 100px !important; padding: 0;">&nbsp;
+</td>
+
+<td align="center">
 <!--
 <iframe src="http://qotd.ralph-schuster.eu/fqotd.html" style="border: 1px solid #999; padding: 5px; background: #c3e0ee; height: 40px; width: 100%; text-align: center; vertical-align: middle !important; -moz-border-radius: 15px; border-radius: 15px;"></iframe>
 -->
 <form id="generateForm">
 	<table style="margin: 10px; border: 1px solid #999; padding: 5px; background: #eeeeee; -moz-border-radius: 15px; border-radius: 15px;">
+		<tr>
+			<td colspan="6"><b>Embed FQOTD at your own homepage!</b></td>
+		</tr>
 		<tr>
 			<td>Foreground:</td>
 			<td><input type="text" size="6" id="foreground" value="#000000"/></td>
@@ -99,9 +102,27 @@
 		</tr>
 	</table>
 </form>
+</td>
+
+<td style="width: 100px !important; vertical-align: bottom; padding-bottom: 20px;">
+<p>
+<a href="rss.xml"><img src="rss.png" width="50" alt="RSS Feed" title="RSS Feed"/></a>
+</p>
+<p>
+<div class="fb-like" data-href="https://www.facebook.com/FalseQuoteOfTheDay" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
+</p>
+<p>
+<a href="https://twitter.com/fqotd" class="twitter-follow-button" data-show-count="false" data-lang="de" data-size="large" data-dnt="true">@fqotd folgen</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+</p>
+</td>
+</tr>
+<td colspan="3">
 <p><b>Preview</b></p>
 <div id="preview"></div>
-</div>
+</td>
+</tr>
+</table>
 </center>
 <html>
 
