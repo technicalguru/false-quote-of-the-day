@@ -6,6 +6,7 @@ error_reporting(E_ERROR | E_WARNING | E_PARSE);
 require_once('config.php');
 require_once('twitteroauth.php');
 include_once("fb/facebook.php");
+require_once('rss.php');
 
 // Get DB connection
 $con = mysql_connect(DBHOST, DBLOGIN, DBPASSWD);
@@ -15,6 +16,9 @@ if (!$con) {
 }
 
 mysql_select_db(DBNAME, $con);
+
+// The RSS Generator
+$rssFeed = new RssFeed('rss.xml', &$con);
 
 $text = '';
 $tweetError = 0;
@@ -54,7 +58,8 @@ if ($connection->error || !$fbuser) {
 		echo "FQOTD: ".$text."<br/>";
 
 		// Twitter it
-		$result = $connection->post('statuses/update', array('status' => sanitize($text)));
+		$result = $connection->post('statuses/update', array('status' => sanitize($text.' #fqotd')));
+ 		// http://bit.ly/XZYzN7
 		if ($result->error) {
 			echo "error while tweeting: ".$result->error."<br/>";
 			$tweetError = 1;
@@ -84,6 +89,10 @@ if ($connection->error || !$fbuser) {
 				echo "error while posting to Facebook: ". $e->getMessage();
 				$tweetError = 1;
 		        }
+
+			// Save RSS Feed
+			$rssFeed->addQuote($GLOBALS['fqotd']);
+			$rssFeed->save();
 		}
 
 	} else {
@@ -140,7 +149,8 @@ function getTweetText($con) {
 			return '';
 		}
 		if ($row = mysql_fetch_array($result)) {
-			$rc= $row['quote'] . ' (' . $row['author'] . ') #fqotd'; // http://bit.ly/XZYzN7
+			$rc= $row['quote'] . ' (' . $row['author'] . ')';
+			$GLOBALS['fqotd'] = $row;
 		}
 
 	} else {
