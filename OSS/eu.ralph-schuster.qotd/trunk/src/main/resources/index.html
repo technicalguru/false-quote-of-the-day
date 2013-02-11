@@ -28,8 +28,57 @@
 	}
 
 	</script>
+	<style type="text/css">
+		table#main {
+			width: 1000px;
+			background: none;
+			border-spacing: 5px;
+		}
+		td#header, td#maincol, td#leftcol, td#rightcol {
+			background-color: #cfd3d4; /*#c3e0ee; /* #eeeeee; */
+			border: 1px solid #999; padding: 5px; 
+			-moz-border-radius: 10px; border-radius: 10px;
+			font-family: Times;
+		}
+		td#header {
+			padding: 10px;
+			font-size: 200%;
+			font-weight: bold;
+			text-align: center;
+			border-width: 2px; 
+			border-color: #666; 
+		}
+		td#maincol {
+		}
+		td#leftcol {
+			text-align: center;
+			vertical-align: middle;
+			width: 200px;
+			background-image: url(fqotd-logo.png);
+			background-repeat: no-repeat;
+			background-position: bottom;
+		}
+		td#rightcol {
+			width: 150px;
+			vertical-align: bottom;
+		}
+		textarea, input {
+			border: 1px solid #999; 
+			-moz-border-radius: 5px; border-radius: 5px;
+		}
+		input {
+			padding: 3px; 7px;
+		}
+		td.preview {
+			border: none;
+			background:none;
+		}
+	</style>
+
 </head>
-<body style="background: url(fqotd-main.gif); background-repeat:no-repeat; background-attachment:fixed; background-position: center top;" onLoad="generateCode();">
+<body style="background: url(fqotd-bg.gif);" onLoad="generateCode();">
+
+<!-- Facebook only -->
 <div id="fb-root"></div>
 <script>(function(d, s, id) {
   var js, fjs = d.getElementsByTagName(s)[0];
@@ -38,90 +87,92 @@
   js.src = "//connect.facebook.net/de_DE/all.js#xfbml=1&appId=284450145016296";
   fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));</script>
-<center>
-<h1>False Quote of the Day</h1>
-<table style="width: 1000px; vertical-align: middle; border: none;">
-<tr>
-<td style="width: 100px !important; padding: 0;">&nbsp;
-</td>
 
-<td align="center">
+<center>
+<table id="main">
+	<tr>
+		<td colspan="3" id="header">False Quote of the Day</td>
+	</tr>
+	<tr>
+		<td id="leftcol"><!--img src="fqotd-main.png" width="190"/-->&nbsp;</td>
+		<td id="maincol">
 <!--
 <iframe src="http://qotd.ralph-schuster.eu/fqotd.html" style="border: 1px solid #999; padding: 5px; background: #c3e0ee; height: 40px; width: 100%; text-align: center; vertical-align: middle !important; -moz-border-radius: 15px; border-radius: 15px;"></iframe>
 -->
-<form id="generateForm">
-	<table style="margin: 10px; border: 1px solid #999; padding: 5px; background: #eeeeee; -moz-border-radius: 15px; border-radius: 15px;">
-		<tr>
-			<td colspan="6"><b>Embed FQOTD at your own homepage!</b></td>
-		</tr>
-		<tr>
-			<td>Foreground:</td>
-			<td><input type="text" size="6" id="foreground" value="#000000"/></td>
-			<td>Background:</td>
-			<td><input type="text" size="6" id="background" value="#c3e0ee"/></td>
-			<td>Font Size (pt):</td>
-			<td><input type="text" size="6" id="fontsize" value=""/></td>
-		</tr>
-		<tr>
-			<td>Height:</td>
-			<td><input type="text" size="6" id="height" value="50px"/></td>
-			<td>Width:</td>
-			<td><input type="text" size="6" id="width" value="100%"/></td>
-			<td>Font:</td>
-			<td>
-				<select id="fontfamily">
-					<option selected="selected" value="">(Default)</option>
-					<option value="cursive">cursive</option>
-					<option value="Arial">Arial</option>
-					<option value="monospace">monospace</option>
-					<option value="sans-serif">sans-serif</option>
-					<option value="serif">serif</option>
-					<option value="Tahoma">Tahoma</option>
-					<option value="Times">Times</option>
-					<option value="Times+New+Roman">Times New Roman</option>
-					<option value="Verdana">Verdana</option>
-				</select>
-			</td>
-		</tr>
-		<tr>
-			<td>Border Color:</td>
-			<td><input type="text" size="6" id="border-color" value="#999999"/></td>
-			<td>Border Width:</td>
-			<td><input type="text" size="6" id="border-width" value="1px"/></td>
-			<td>Corner Radius:</td>
-			<td><input type="text" size="6" id="corner-radius" value="15px"/></td>
-		</tr>
-		<tr>
-			<td align="center"><input type="button" value="Generate" onClick="generateCode(); return false;"/></td>
-			<td colspan="3"/>
-			<td>Insets:</td>
-			<td><input type="text" size="6" id="padding" value="0px"/></td>
-		</tr>
-		<tr>
-			<td colspan="6"><textarea id="snippet" readonly="readonly" style="width: 100%; background: #eeeeee; border: 1px solid #999;" rows="5"></textarea></td>
-		</tr>
-	</table>
-</form>
-</td>
+			<form id="generateForm">
+				<center>
+				<table style="margin: 5px; ">
+					<tr>
+						<td colspan="6"><b>Embed FQOTD at your own homepage!</b></td>
+					</tr>
+					<tr>
+						<td>Foreground:</td>
+						<td><input type="text" size="6" id="foreground" value="#000000"/></td>
+						<td>Background:</td>
+						<td><input type="text" size="6" id="background" value="#cfd3d4"/></td>
+						<td>Font Size (pt):</td>
+						<td><input type="text" size="6" id="fontsize" value=""/></td>
+					</tr>
+					<tr>
+						<td>Height:</td>
+						<td><input type="text" size="6" id="height" value="50px"/></td>
+						<td>Width:</td>
+						<td><input type="text" size="6" id="width" value="100%"/></td>
+						<td>Font:</td>
+						<td>
+							<select id="fontfamily">
+								<option selected="selected" value="">(Default)</option>
+								<option value="cursive">cursive</option>
+								<option value="Arial">Arial</option>
+								<option value="monospace">monospace</option>
+								<option value="sans-serif">sans-serif</option>
+								<option value="serif">serif</option>
+								<option value="Tahoma">Tahoma</option>
+								<option value="Times">Times</option>
+								<option value="Times+New+Roman">Times New Roman</option>
+								<option value="Verdana">Verdana</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>Border Color:</td>
+						<td><input type="text" size="6" id="border-color" value="#999999"/></td>
+						<td>Border Width:</td>
+						<td><input type="text" size="6" id="border-width" value="1px"/></td>
+						<td>Corner Radius:</td>
+						<td><input type="text" size="6" id="corner-radius" value="10px"/></td>
+					</tr>
+					<tr>
+						<td align="center"><input type="button" value="Generate" onClick="generateCode(); return false;"/></td>
+						<td colspan="3"/>
+						<td>Insets:</td>
+						<td><input type="text" size="6" id="padding" value="0px"/></td>
+					</tr>
+					<tr>
+						<td colspan="6"><textarea id="snippet" readonly="readonly" style="width: 100%; background: #eeeeee; border: 1px solid #999;" rows="5"></textarea></td>
+					</tr>
+				</table>
+				</center>
+			</form>
+		</td>
 
-<td style="width: 100px !important; vertical-align: bottom; padding-bottom: 20px;">
-<p>
-<a href="rss.xml"><img src="rss.png" width="50" alt="RSS Feed" title="RSS Feed"/></a>
-</p>
-<p>
-<div class="fb-like" data-href="https://www.facebook.com/FalseQuoteOfTheDay" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
-</p>
-<p>
-<a href="https://twitter.com/fqotd" class="twitter-follow-button" data-show-count="false" data-lang="de" data-size="large" data-dnt="true">@fqotd folgen</a>
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-</p>
-</td>
-</tr>
-<td colspan="3">
-<p><b>Preview</b></p>
-<div id="preview"></div>
-</td>
-</tr>
+		<td id="rightcol">
+			<center>
+			<p>
+				<a href="rss.xml"><img src="rss.png" width="50" alt="RSS Feed" title="RSS Feed"/></a>
+			</p>
+			<p>
+				<iframe id="f2e0b476dff0b72" class="fb_ltr" scrolling="no" name="f74dcac4275032" style="border: medium none; overflow: hidden; height: 21px; width: 102px;" title="Like this content on Facebook." src="https://www.facebook.com/plugins/like.php?api_key=284450145016296&locale=de_DE&sdk=joey&channel_url=https%3A%2F%2Fs-static.ak.facebook.com%2Fconnect%2Fxd_arbiter.php%3Fversion%3D18%23cb%3Df31f70a160f2596%26origin%3Dhttps%253A%252F%252Fqotd.ralph-schuster.eu%252Ff26d6b520b9b15c%26domain%3Dqotd.ralph-schuster.eu%26relation%3Dparent.parent&href=https%3A%2F%2Fwww.facebook.com%2FFalseQuoteOfTheDay&node_type=link&width=450&layout=button_count&colorscheme=light&show_faces=false&send=false&extended_social_context=false"></iframe>
+			</p>
+			<p>
+				<iframe class="twitter-follow-button twitter-follow-button" scrolling="no" frameborder="0" allowtransparency="true" src="https://platform.twitter.com/widgets/follow_button.1360366574.html#_=1360616657074&dnt=true&id=twitter-widget-0&lang=de&screen_name=fqotd&show_count=false&show_screen_name=true&size=l" style="width: 126px; height: 28px;" title="Twitter Follow Button" data-twttr-rendered="true"></iframe>
+			</p>
+			</center>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3" id="preview">&nbsp;</td>
+	</tr>
 </table>
 </center>
 <html>
