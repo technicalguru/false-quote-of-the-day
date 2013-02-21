@@ -39,7 +39,6 @@ $connection = new TwitterOAuth(
 );
 
 // Connect to Facebook
-//Call Facebook API
 $facebook = new Facebook(array(
 	'appId'  => FB_APP_ID,
 	'secret' => FB_APP_SECRET
@@ -47,18 +46,26 @@ $facebook = new Facebook(array(
 $facebook->setAccessToken(FB_ACCESS_TOKEN);
 $fbuser = $facebook->getUser();
 
+/*
+echo addTags('Irgendein Text (vom Autor)', 'autor, irgendein')."<br/>";
+echo addTags('Irgendein Text (vom Autor)', '')."<br/>";
+echo addTags('Irgendein Text (vom Autor)', 'vomautor')."<br/>";
+*/
+
 if ($connection->error || !$fbuser) {
 	if ($connection->error) echo "error while connecting to Twitter: ".$connection->error."<br/>";
 	if (!$fbuser) echo "error while connecting to Facebook <br/>";
 	$tweetError = 1;
 } else {
-	$text = getTweetText($con);
-
+	$tweet = getTweetText($con);
+	$text = $tweet[0];
+	$tags = $tweet[1];
 	if ($text) {
 		echo "FQOTD: ".$text."<br/>";
 
 		// Twitter it
-		$result = $connection->post('statuses/update', array('status' => sanitize($text.' #fqotd')));
+		$tweettext = addTags($text, $tags);
+		$result = $connection->post('statuses/update', array('status' => sanitize($tweettext)));
  		// http://bit.ly/XZYzN7
 		if ($result->error) {
 			echo "error while tweeting: ".$result->error."<br/>";
@@ -96,7 +103,7 @@ if ($connection->error || !$fbuser) {
 		}
 
 	} else {
-		echo "Already posted today<br/>";
+		echo "Already posted today - $tags<br/>";
 	}
 }
 
@@ -110,7 +117,7 @@ function getTweetText($con) {
 	$result = mysql_query("SELECT * FROM qotd_settings WHERE name='lastTweet'", $con);
 	if (!$result) {
 		echo "error while retrieving last tweet day: ".mysql_error();
-		return '';
+		return array('');
 	}
 	if ($row = mysql_fetch_array($result)) {
 		$lastTweet = $row['value'];
@@ -122,7 +129,7 @@ function getTweetText($con) {
 	$result = mysql_query("SELECT * FROM qotd_settings WHERE name='currentDay'", $con);
 	if (!$result) {
 		echo "error while retrieving current quote day: ".mysql_error();
-		return '';
+		return array('');
 	}
 	if ($row = mysql_fetch_array($result)) {
 		$currentDay = $row['value'];
@@ -137,7 +144,7 @@ function getTweetText($con) {
 		$result = mysql_query("SELECT * FROM qotd_settings WHERE name='currentId'", $con);
 		if (!$result) {
 			echo "error while retrieving current quote id: ".mysql_error();
-			return '';
+			return array('');
 		}
 		if ($row = mysql_fetch_array($result)) {
 			$currentId = $row['value'];
@@ -146,18 +153,46 @@ function getTweetText($con) {
 		$result = mysql_query("SELECT * FROM qotd_quotes WHERE id=$currentId");
 		if (!$result) {
 			echo "error while retrieving current quote: ".mysql_error();
-			return '';
+			return array('');
 		}
 		if ($row = mysql_fetch_array($result)) {
 			$rc= $row['quote'] . ' (' . $row['author'] . ')';
+			$tags = $row['hashtags'];
 			$GLOBALS['fqotd'] = $row;
 		}
 
 	} else {
 		$rc = '';
+		$tags = 'test test2';
 	}
 
-	return $rc;
+	return array($rc, $tags);
+}
+
+function addTags($text, $tags) {
+	if (!is_array($tags)) {
+		$tags = preg_split('/[\s,]+/', $tags);
+	}
+	$numTags = 0;
+	foreach ($tags AS $tag) {
+		if (!$tag) continue;
+		if (substr($tag, 0, 1) == '#') $tag = substr($tag, 1);
+		$pos = stripos($text, $tag);
+		if ($pos >= 0) {
+			if ($pos > 0) $text = substr($text, 0, $pos).'#'.substr($text, $pos);
+			else $text = '#'.$text;
+		} else {
+			$text .= ' #'.$tag;
+		}
+		$numTags++;
+	}
+	// No tags? tag the last word (the authors surname)
+	if ($numTags == 0) {
+		$pos = strrpos($text, ' ')+1;
+		$text = substr($text, 0, $pos).'#'.substr($text, $pos);
+	}
+
+	return $text.' #fqotd';
 }
 
 function sanitize($s) {
