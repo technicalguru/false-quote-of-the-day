@@ -103,7 +103,7 @@ if ($connection->error || !$fbuser) {
 		}
 
 	} else {
-		echo "Already posted today - $tags<br/>";
+		echo "Already posted today<br/>";
 	}
 }
 
@@ -163,7 +163,7 @@ function getTweetText($con) {
 
 	} else {
 		$rc = '';
-		$tags = 'test test2';
+		$tags = '';
 	}
 
 	return array($rc, $tags);
