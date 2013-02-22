@@ -47,6 +47,7 @@ $facebook->setAccessToken(FB_ACCESS_TOKEN);
 $fbuser = $facebook->getUser();
 
 /*
+echo addTags('Leistung aus Leidenschaft (Lance Armstrong)', 'deuba armstrong')."<br/>";
 echo addTags('Irgendein Text (vom Autor)', 'autor, irgendein')."<br/>";
 echo addTags('Irgendein Text (vom Autor)', '')."<br/>";
 echo addTags('Irgendein Text (vom Autor)', 'vomautor')."<br/>";
@@ -178,7 +179,7 @@ function addTags($text, $tags) {
 		if (!$tag) continue;
 		if (substr($tag, 0, 1) == '#') $tag = substr($tag, 1);
 		$pos = stripos($text, $tag);
-		if ($pos >= 0) {
+		if ($pos !== FALSE) {
 			if ($pos > 0) $text = substr($text, 0, $pos).'#'.substr($text, $pos);
 			else $text = '#'.$text;
 		} else {
@@ -188,7 +189,9 @@ function addTags($text, $tags) {
 	}
 	// No tags? tag the last word (the authors surname)
 	if ($numTags == 0) {
+		$bracketpos = strrpos($text, '(')+1;
 		$pos = strrpos($text, ' ')+1;
+		if ($bracketpos > $pos) $pos = $bracketpos;
 		$text = substr($text, 0, $pos).'#'.substr($text, $pos);
 	}
 
