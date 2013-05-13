@@ -87,6 +87,8 @@ sub getquote {
 			$sth = $DBH->prepare("INSERT INTO qotd_settings (name, value) VALUES ('currentId', '$id')");
 			$sth->execute();
 		}
+		$sth = $DBH->prepare("UPDATE qotd_quotes SET last_usage=CURRENT_TIMESTAMP WHERE id=$id");
+		$sth->execute();
 	}
 
 	# Sanitize for SOAP
