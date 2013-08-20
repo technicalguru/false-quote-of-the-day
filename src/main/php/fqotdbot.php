@@ -46,6 +46,15 @@ $facebook = new Facebook(array(
 $facebook->setAccessToken(FB_ACCESS_TOKEN);
 $fbuser = $facebook->getUser();
 
+// Get the Access Token for the FB Page
+$accounts = $facebook->api('/me/accounts', 'GET', array('access_token' => FB_ACCESS_TOKEN));
+$data = $accounts['data'];
+foreach($data as $account) {
+	if( $account['id'] == 464015660326313 ) {
+		define(FB_PAGE_ACCESS_TOKEN, $account['access_token']);
+	}
+}
+
 
 /*
 echo addTags('Leistung aus Leidenschaft (Lance Armstrong)', 'deuba armstrong')."<br/>";
@@ -112,6 +121,10 @@ if ($connection->error || !$fbuser) {
 		// Post it in Facebook
 		echo "Not posted on FB yet...\n";
 		$fbText = "$quote[quote] ($quote[author])";
+
+		// Creating the image
+		shell_exec("./textimage.pl \"$quote[quote]\" \"$quote[author]\"");
+		echo "   <img src=\"quote.gif\"/>\n";
 		$msg_body = array(
 			'message' => sanitize($fbText)
 		);
