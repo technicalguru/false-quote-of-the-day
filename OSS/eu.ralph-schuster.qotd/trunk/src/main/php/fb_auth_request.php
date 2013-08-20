@@ -1,5 +1,8 @@
 <?php 
 
+echo "You need to edit the PHP script to enable auth request";
+
+exit;
 require_once("config.php");
 
 $app_id = FB_APP_ID;
@@ -16,7 +19,7 @@ if (empty($code)) {
 	$_SESSION['state'] = md5(uniqid(rand(), TRUE)); // CSRF protection
 	$dialog_url = "https://www.facebook.com/dialog/oauth?client_id=".
 		$app_id . "&redirect_uri=" . urlencode($my_url) . "&state=".
-		$_SESSION['state']. "&scope=manage_pages,publish_stream";
+		$_SESSION['state']. "&scope=manage_pages,publish_stream,photo_upload";
 
 	echo("<script> top.location.href='" . $dialog_url . "'</script>");
 }
@@ -30,6 +33,7 @@ if ($_SESSION['state'] && ($_SESSION['state'] === $_REQUEST['state'])) {
 	$response = file_get_contents($token_url);
 	$params = null;
 	parse_str($response, $params);
+	echo "<br/>client_token=".$params['client_token']."<br/>";
 	echo "<br/>access_token=".$params['access_token']."<br/>";
 
 	$graph_url = "https://graph.facebook.com/me?access_token=" . $params['access_token'];

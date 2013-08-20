@@ -46,6 +46,7 @@ $facebook = new Facebook(array(
 $facebook->setAccessToken(FB_ACCESS_TOKEN);
 $fbuser = $facebook->getUser();
 
+
 /*
 echo addTags('Leistung aus Leidenschaft (Lance Armstrong)', 'deuba armstrong')."<br/>";
 echo addTags('Irgendein Text (vom Autor)', 'autor, irgendein')."<br/>";
@@ -55,119 +56,146 @@ echo addTags('Irgendein Text (vom Autor)', 'vomautor')."<br/>";
 
 if ($connection->error || !$fbuser) {
 	if ($connection->error) echo "error while connecting to Twitter: ".$connection->error."<br/>";
-	if (!$fbuser) echo "error while connecting to Facebook <br/>";
+	if (!$fbuser) {
+		echo "error while connecting to Facebook <br/>";
+		// provoke an exception to get more information
+		try {
+			$user_profile = $facebook->api('/me','GET');
+			echo "Name: " . $user_profile['name'];
+		} catch(FacebookApiException $e) {
+			// If the user is logged out, you can have a 
+			// user ID even though the access token is invalid.
+			// In this case, we'll get an exception, so we'll
+			// just ask the user to login again here.
+			echo "error-type: ".$e->getType()."<br/>\n";
+			echo "error-message: ".$e->getMessage()."<br/>\n";
+			//echo "Application ID: ".FB_APP_ID."<br/>\n";
+			// echo "Application Secret: ".FB_APP_SECRET."<br/>\n";
+			// echo "Client Token: ".FB_CLIENT_TOKEN."<br/>\n";
+			//echo "Access Token: ".FB_ACCESS_TOKEN."<br/>\n";
+
+		}   
+	}
 	$tweetError = 1;
 } else {
-	$tweet = getTweetText($con);
-	$text = $tweet[0];
-	$tags = $tweet[1];
-	if ($text) {
-		echo "FQOTD: ".$text."<br/>";
+	$quote = getTweet($con);
+	echo "<pre>";
+	print_r($quote);
+	echo "\n\n";
 
+	if (!$quote['tweeted']) {
 		// Twitter it
-		$tweettext = addTags($text, $tags);
+		echo "Not twittered yet...\n";
+		$tweettext = addTags("$quote[quote] ($quote[author])", $quote['hashtags']);
+		echo "   Twittering: $tweettext\n";
 		$result = $connection->post('statuses/update', array('status' => sanitize($tweettext)));
  		// http://bit.ly/XZYzN7
 		if ($result->error) {
-			echo "error while tweeting: ".$result->error."<br/>";
+			echo "   error while tweeting: ".$result->error."\n";
 			$tweetError = 1;
 		}
 
 		if (!$tweetError) {
-			echo "Tweeted<br/>";
+			echo "   Tweeted\n";
 			// Save the day that we tweeted
 			$today = date("Ymd");
-			mysql_query("UPDATE qotd_settings SET value='$today' WHERE name='lastTweet'", $con);
+			$result = mysql_query("UPDATE qotd_settings SET value='$today' WHERE name='lastTweet'", $con);
 			if (!$result) {
-				echo "error while saving tweet: ".mysql_error()."<br/>";
+				echo "   error while saving tweet: ".mysql_error()."\n";
 			}
 		}
-
-		// Post it in Facebook
-		if (!$tweetError) {
-			$msg_body = array(
-				'message' => sanitize($text)
-			);
-
-			$post_url = '/'.FB_PAGE_ID.'/feed';
-			try {
-				$postResult = $facebook->api($post_url, 'post', $msg_body );
-				echo "Posted on Facebook<br/>";
-			} catch (FacebookApiException $e) {
-				echo "error while posting to Facebook: ". $e->getMessage();
-				$tweetError = 1;
-		        }
-
-			// Save RSS Feed
-			$rssFeed->addQuote($GLOBALS['fqotd']);
-			$rssFeed->save();
-		}
-
 	} else {
-		echo "Already posted today<br/>";
+		echo "Already tweeted today\n";
 	}
+
+	if (!$quote['facebookPosted']) {
+		// Post it in Facebook
+		echo "Not posted on FB yet...\n";
+		$fbText = "$quote[quote] ($quote[author])";
+		$msg_body = array(
+			'message' => sanitize($fbText)
+		);
+
+		$post_url = '/'.FB_PAGE_ID.'/feed';
+		try {
+			echo "   Posting: $fbText\n";
+			$postResult = $facebook->api($post_url, 'post', $msg_body );
+		} catch (FacebookApiException $e) {
+			echo "   error while posting to Facebook: ". $e->getMessage()."\n";
+			$fbError = 1;
+	        }
+
+
+		if (!$fbError) {
+			echo "   Posted on Facebook\n";
+			// Save the day that we posted
+			$today = date("Ymd");
+			$result = mysql_query("UPDATE qotd_settings SET value='$today' WHERE name='lastFBPost'", $con);
+			if (!$result) {
+				echo "   error while saving post: ".mysql_error()."\n";
+			}
+		}
+	} else {
+		echo "Already posted on FB today<br/>";
+	}
+
+	// Save RSS Feed
+	$rssFeed->addQuote($GLOBALS['fqotd']);
+	$rssFeed->save();
 }
 
 // Close DB
 mysql_close($con);
 
+echo "</pre>";
 return;
 
-function getTweetText($con) {
-	// What did we last tweet?
+function getTweet($con) {
+	// Load all settings
+	$result = mysql_query("SELECT * FROM qotd_settings", $con);
+	if (!$result) {
+		echo "error while retrieving settings: ".mysql_error();
+		return array();
+	}
+	while ($row = mysql_fetch_assoc($result)) {
+		$settings[$row['name']] = $row['value'];
+	}
+
+	// What is the current quote?
+	$result = mysql_query("SELECT * FROM qotd_quotes WHERE id=$settings[currentId]", $con);
+	if (!$result) {
+		echo "error while retrieving current quote: ".mysql_error();
+		return array();
+	}
+	$rc = mysql_fetch_assoc($result);
+
+	// Was it tweeted?
 	$result = mysql_query("SELECT * FROM qotd_settings WHERE name='lastTweet'", $con);
 	if (!$result) {
 		echo "error while retrieving last tweet day: ".mysql_error();
 		return array('');
 	}
-	if ($row = mysql_fetch_array($result)) {
+	if ($row = mysql_fetch_assoc($result)) {
 		$lastTweet = $row['value'];
 	} else {
 		$lastTweet = date("Ymd", time() - 86400); // Yesterday
 	}
+	$rc['tweeted'] = $lastTweet == date("Ymd", time());
 
-	// What is the current quote?
-	$result = mysql_query("SELECT * FROM qotd_settings WHERE name='currentDay'", $con);
+	// Was it posted on Facebook?
+	$result = mysql_query("SELECT * FROM qotd_settings WHERE name='lastFBPost'", $con);
 	if (!$result) {
-		echo "error while retrieving current quote day: ".mysql_error();
+		echo "error while retrieving last FB post day: ".mysql_error();
 		return array('');
 	}
-	if ($row = mysql_fetch_array($result)) {
-		$currentDay = $row['value'];
+	if ($row = mysql_fetch_assoc($result)) {
+		$lastFBPost = $row['value'];
 	} else {
-		$currentDay = '';
+		$lastFBPost = date("Ymd", time() - 86400); // Yesterday
 	}
+	$rc['facebookPosted'] = $lastFBPost == date("Ymd", time());
 
-	// if we did not tweet yet and have a today's quote
-	$today = date("Ymd");
-	if (($currentDay != $lastTweet) && ($currentDay == $today)) {
-		// Get the current quote id
-		$result = mysql_query("SELECT * FROM qotd_settings WHERE name='currentId'", $con);
-		if (!$result) {
-			echo "error while retrieving current quote id: ".mysql_error();
-			return array('');
-		}
-		if ($row = mysql_fetch_array($result)) {
-			$currentId = $row['value'];
-		}
-		// Get the current quote
-		$result = mysql_query("SELECT * FROM qotd_quotes WHERE id=$currentId");
-		if (!$result) {
-			echo "error while retrieving current quote: ".mysql_error();
-			return array('');
-		}
-		if ($row = mysql_fetch_array($result)) {
-			$rc= $row['quote'] . ' (' . $row['author'] . ')';
-			$tags = $row['hashtags'];
-			$GLOBALS['fqotd'] = $row;
-		}
-
-	} else {
-		$rc = '';
-		$tags = '';
-	}
-
-	return array($rc, $tags);
+	return $rc;
 }
 
 function addTags($text, $tags) {
@@ -177,6 +205,7 @@ function addTags($text, $tags) {
 	$numTags = 0;
 	foreach ($tags AS $tag) {
 		if (!$tag) continue;
+		$originalText = $text;
 		if (substr($tag, 0, 1) == '#') $tag = substr($tag, 1);
 		$pos = stripos($text, $tag);
 		if ($pos !== FALSE) {
@@ -185,17 +214,23 @@ function addTags($text, $tags) {
 		} else {
 			$text .= ' #'.$tag;
 		}
-		$numTags++;
+		if (strlen($text) <= 140) {
+			$numTags++;
+		} else {
+			$text = $originalText;
+		}
 	}
 	// No tags? tag the last word (the authors surname)
-	if ($numTags == 0) {
+	if (($numTags == 0) && (strlen($text) < 140)) {
 		$bracketpos = strrpos($text, '(')+1;
 		$pos = strrpos($text, ' ')+1;
 		if ($bracketpos > $pos) $pos = $bracketpos;
 		$text = substr($text, 0, $pos).'#'.substr($text, $pos);
 	}
 
-	return $text.' #fqotd';
+	// fqotd tag
+	if (strlen($text) < 133) $text .= " #fqotd";
+	return $text;
 }
 
 function sanitize($s) {
