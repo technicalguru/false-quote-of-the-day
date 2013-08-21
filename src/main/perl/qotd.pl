@@ -58,23 +58,15 @@ sub getquote {
 			$author = $$row{'author'};
 		}
 	} else {
-		# Find a new quote
-		if ($SETTINGS{'currentDay'}) {
-			$id = $SETTINGS{'currentId'};
-		} else {
-			$id = 0;
+		# Find a new quote by selecting minimum last day with minimum id
+		$sth = $DBH->prepare("SELECT * FROM qotd_quotes ORDER BY last_usage, id");
+		$sth->execute();
+		if ($row = $sth->fetchrow_hashref()) {
+			$quote  = $$row{'quote'};
+			$author = $$row{'author'};
+			$id = $$row{'id'};
 		}
-		while (!$quote) {
-			$id++;
-			$id = 1 if $id > $maxId;
-			$sth = $DBH->prepare("SELECT * FROM qotd_quotes WHERE id=$id");
-			$sth->execute();
-			if ($row = $sth->fetchrow_hashref()) {
-				$quote  = $$row{'quote'};
-				$author = $$row{'author'};
-			}
-		}
-
+			
 		# Save settings for new quote
 		if ($SETTINGS{'currentDay'}) {
 			$sth = $DBH->prepare("UPDATE qotd_settings SET value='$today' WHERE name='currentDay'");

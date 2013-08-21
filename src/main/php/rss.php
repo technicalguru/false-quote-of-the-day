@@ -56,7 +56,7 @@ class RssFeed {
 			"	>\n".
 
 			"	<channel>\n".
-			"		<title>False Quote of the Day (FQOTD)</title>\n".
+			"		<title>In den Mund gelegt</title>\n".
 			"		<atom:link href=\"http://qotd.ralph-schuster.eu/".$this->rssFile."\" rel=\"self\" type=\"application/rss+xml\" />\n".
 			"		<link>http://qotd.ralph-schuster.eu</link>\n".
 			"		<description>Der satirische Zitatservice</description>\n".
