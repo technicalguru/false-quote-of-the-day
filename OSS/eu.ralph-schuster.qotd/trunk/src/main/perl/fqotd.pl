@@ -23,13 +23,13 @@ $fontdef .= "font-size: ${fontsize}pt; " if $fontsize;
 print <<EOF
 <html>
 <head>
-    <title>False Quote of the Day</title>
+    <title>In den Mund gelegt</title>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" language="JavaScript" src="quote.js"></script>
 </head>
 <body style="color: $color; $fontdef border: 0; padding: 0; margin: 0; " onLoad="getquoteAjax();">
 	<table id="fqotd" style="$fontdef border: none; text-align: center; width: 100%; height: 100%;">
-		<tr><td valign="middle"><a href="http://qotd.ralph-schuster.eu/" title="False Quote of the Day" target="_top" style="text-decoration:none !important; color: $color;">
+		<tr><td valign="middle"><a href="http://qotd.ralph-schuster.eu/" title="In den Mund gelegt" target="_top" style="text-decoration:none !important; color: $color;">
 		<span id="fqotd-quote" style="font-style: italic; vertical-align: middle;"><img src="ajax-loader.gif" alt="Loading..." title="Loading..."/></span>
 		<span id="fqotd-author" style="vertical-align: middle;"></span></a>
 		</td></tr>
