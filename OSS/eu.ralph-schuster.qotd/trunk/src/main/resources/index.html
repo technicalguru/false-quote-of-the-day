@@ -1,14 +1,14 @@
 <html>
 <head>
-    <title>False Quote of the Day</title>
+    <title>In den Mund gelegt</title>
 	<link rel="Shortcut icon" type="image/x-icon" href="favicon.ico"/> 
-	<meta property="og:title" content="False Quote of the Day" />
+	<meta property="og:title" content="In den Mund gelegt" />
 	<meta property="og:type" content="non_profit" />
 	<meta property="og:url" content="https://www.facebook.com/FalseQuoteOfTheDay" />
 	<meta property="og:image" content="" />
-	<meta property="og:site_name" content="False Quote of the Day" />
+	<meta property="og:site_name" content="In den Mund gelegt" />
 	<meta property="fb:admins" content="100002245462255" />
-	<link href="http://qotd.ralph-schuster.eu/rss.xml" rel="alternate" type="application/rss+xml" title="False Quote of the Day RSS Feed" />
+	<link href="http://qotd.ralph-schuster.eu/rss.xml" rel="alternate" type="application/rss+xml" title="In den Mund gelegt - RSS Feed" />
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript">
 	function generateCode() {
@@ -103,10 +103,10 @@
 <center>
 <table id="main">
 	<tr>
-		<td colspan="3" id="header">False Quote of the Day</td>
+		<td colspan="3" id="header">In den Mund gelegt</td>
 	</tr>
 	<tr>
-		<td id="leftcol"><!--img src="fqotd-main.png" width="190"/-->&nbsp;</td>
+		<td id="leftcol" rowspan="2"><!--img src="fqotd-main.png" width="190"/-->&nbsp;</td>
 		<td id="maincol">
 <!--
 <iframe src="http://qotd.ralph-schuster.eu/fqotd.html" style="border: 1px solid #999; padding: 5px; background: #c3e0ee; height: 40px; width: 100%; text-align: center; vertical-align: middle !important; -moz-border-radius: 15px; border-radius: 15px;"></iframe>
@@ -115,22 +115,22 @@
 				<center>
 				<table style="margin: 5px; ">
 					<tr>
-						<td colspan="6"><b>Embed FQOTD at your own homepage!</b></td>
+						<td colspan="6"><b>HTML-Generator zum Einbetten</b></td>
 					</tr>
 					<tr>
-						<td>Foreground:</td>
+						<td>Schriftfarbe:</td>
 						<td><input type="text" size="6" id="foreground" value="#000000"/></td>
-						<td>Background:</td>
+						<td>Hintergrundfarbe:</td>
 						<td><input type="text" size="6" id="background" value="#cfd3d4"/></td>
-						<td>Font Size (pt):</td>
+						<td>Textgr&ouml;&szlig;e (pt):</td>
 						<td><input type="text" size="6" id="fontsize" value=""/></td>
 					</tr>
 					<tr>
-						<td>Height:</td>
+						<td>H&ouml;he:</td>
 						<td><input type="text" size="6" id="height" value="50px"/></td>
-						<td>Width:</td>
+						<td>Breite:</td>
 						<td><input type="text" size="6" id="width" value="100%"/></td>
-						<td>Font:</td>
+						<td>Schriftart:</td>
 						<td>
 							<select id="fontfamily">
 								<option selected="selected" value="">(Default)</option>
@@ -147,17 +147,17 @@
 						</td>
 					</tr>
 					<tr>
-						<td>Border Color:</td>
+						<td>Rahmenfarbe:</td>
 						<td><input type="text" size="6" id="border-color" value="#999999"/></td>
-						<td>Border Width:</td>
+						<td>Rahmendicke:</td>
 						<td><input type="text" size="6" id="border-width" value="1px"/></td>
-						<td>Corner Radius:</td>
+						<td>Runde Ecken:</td>
 						<td><input type="text" size="6" id="corner-radius" value="10px"/></td>
 					</tr>
 					<tr>
-						<td align="center"><input type="button" value="Generate" onClick="generateCode(); return false;"/></td>
+						<td align="center"><input type="button" value="Erzeuge Code" onClick="generateCode(); return false;"/></td>
 						<td colspan="3"/>
-						<td>Insets:</td>
+						<td>Innenabstand:</td>
 						<td><input type="text" size="6" id="padding" value="0px"/></td>
 					</tr>
 					<tr>
@@ -168,7 +168,12 @@
 			</form>
 		</td>
 
-		<td id="rightcol">&nbsp;</td>
+		<td id="rightcol" rowspan="2">&nbsp;</td>
+	</tr>
+	<tr>
+		<td id="maincol">
+			<b>Als einfaches Bild einbetten:</b><br/>
+			 &nbsp;&nbsp;<tt><a href="http://qotd.ralph-schuster.eu/quote.gif" title="Click here to see today's quote">&lt;img src="http://qotd.ralph-schuster.eu/quote.gif"/&gt;</a></tt></td>
 	</tr>
 	<tr>
 		<td colspan="3" id="preview">&nbsp;</td>
