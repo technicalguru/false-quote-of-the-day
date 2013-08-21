@@ -21,6 +21,6 @@ $theme = int(rand($#bg));
 $quote =~ s/\!/\\!/g;
 $author =~ s/\!/\\!/g;
 
-system("convert -background '#$bg[$theme]' -fill '#$f1[$theme]' -size 320x430 -pointsize 20 -font Times-Italic caption:'\"$quote\"' -trim -font Times-Roman -gravity SouthEast -size 320x -pointsize 30 -fill '#$f2[$theme]' caption:'($author)' -trim -bordercolor '#$bg[$theme]' -border 30 -append quote.gif");
+system("convert -background '#$bg[$theme]' -fill '#$f1[$theme]' -bordercolor '#$bg[$theme]' -size 420x360 -font Times-Italic caption:'\"$quote\"' -border 30 -crop 420x390+30+0 -font Times-Roman -gravity SouthEast -size 420x30 -fill '#$f2[$theme]' caption:'($author)' -append -border 30 +repage quote.gif");
 
 

@@ -45,6 +45,9 @@ $facebook = new Facebook(array(
 ));
 $facebook->setAccessToken(FB_ACCESS_TOKEN);
 $fbuser = $facebook->getUser();
+$facebook->setFileUploadSupport(true);
+
+echo "<pre>";
 
 // Get the Access Token for the FB Page
 $accounts = $facebook->api('/me/accounts', 'GET', array('access_token' => FB_ACCESS_TOKEN));
@@ -54,6 +57,7 @@ foreach($data as $account) {
 		define(FB_PAGE_ACCESS_TOKEN, $account['access_token']);
 	}
 }
+//$facebook->setAccessToken(FB_PAGE_ACCESS_TOKEN);
 
 
 /*
@@ -88,7 +92,6 @@ if ($connection->error || !$fbuser) {
 	$tweetError = 1;
 } else {
 	$quote = getTweet($con);
-	echo "<pre>";
 	print_r($quote);
 	echo "\n\n";
 
@@ -121,26 +124,46 @@ if ($connection->error || !$fbuser) {
 		// Post it in Facebook
 		echo "Not posted on FB yet...\n";
 		$fbText = "$quote[quote] ($quote[author])";
+		$file = "quote.gif";
 
 		// Creating the image
 		shell_exec("./textimage.pl \"$quote[quote]\" \"$quote[author]\"");
 		echo "   <img src=\"quote.gif\"/>\n";
+
+		$msg_body = array(
+			'access_token' => FB_PAGE_ACCESS_TOKEN,
+			'no_story' => 0,
+			'message' => "Zitat des Tages (".date('d.m.Y').")",
+			'source' => '@'.realpath($file)
+		);
+		$post_url = '/'.FB_PAGE_ID.'/photos';
+		try {
+			echo "   Posting image for: $fbText\n";
+			$postResult = $facebook->api($post_url, 'post', $msg_body );
+			$photoId = $postResult['id'];
+			echo "   Posted with ID $photoId\n";
+
+		} catch (FacebookApiException $e) {
+			echo "   error while posting to Facebook: ". $e->getMessage()."\n";
+			$fbError = 1;
+		}
+
+		/*
 		$msg_body = array(
 			'message' => sanitize($fbText)
 		);
-
 		$post_url = '/'.FB_PAGE_ID.'/feed';
 		try {
 			echo "   Posting: $fbText\n";
 			$postResult = $facebook->api($post_url, 'post', $msg_body );
+			echo "   Posted on Facebook\n";
 		} catch (FacebookApiException $e) {
 			echo "   error while posting to Facebook: ". $e->getMessage()."\n";
 			$fbError = 1;
 	        }
-
+		*/
 
 		if (!$fbError) {
-			echo "   Posted on Facebook\n";
 			// Save the day that we posted
 			$today = date("Ymd");
 			$result = mysql_query("UPDATE qotd_settings SET value='$today' WHERE name='lastFBPost'", $con);
