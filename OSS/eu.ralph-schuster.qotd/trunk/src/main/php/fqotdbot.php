@@ -231,6 +231,8 @@ function getTweet($con) {
 	}
 	$rc['facebookPosted'] = $lastFBPost == date("Ymd", time());
 
+	$rc['quote'] = utf8_encode($rc['quote']);
+	$rc['author'] = utf8_encode($rc['author']);
 	return $rc;
 }
 
