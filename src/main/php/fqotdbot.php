@@ -66,9 +66,13 @@ echo addTags('Irgendein Text (vom Autor)', 'autor, irgendein')."<br/>";
 echo addTags('Irgendein Text (vom Autor)', '')."<br/>";
 echo addTags('Irgendein Text (vom Autor)', 'vomautor')."<br/>";
 */
+$errors = array();
 
 if ($connection->error || !$fbuser) {
-	if ($connection->error) echo "error while connecting to Twitter: ".$connection->error."<br/>";
+	if ($connection->error) {
+		echo "error while connecting to Twitter: ".$connection->error."<br/>";
+		$errors[] = "error while connecting to Twitter: ".$connection->error;
+	}
 	if (!$fbuser) {
 		echo "error while connecting to Facebook <br/>";
 		// provoke an exception to get more information
@@ -82,6 +86,8 @@ if ($connection->error || !$fbuser) {
 			// just ask the user to login again here.
 			echo "error-type: ".$e->getType()."<br/>\n";
 			echo "error-message: ".$e->getMessage()."<br/>\n";
+			$errors[] = "FB error-type: ".$e->getType();
+			$errors[] = "FB error-message: ".$e->getMessage();
 			//echo "Application ID: ".FB_APP_ID."<br/>\n";
 			// echo "Application Secret: ".FB_APP_SECRET."<br/>\n";
 			// echo "Client Token: ".FB_CLIENT_TOKEN."<br/>\n";
@@ -104,6 +110,7 @@ if ($connection->error || !$fbuser) {
  		// http://bit.ly/XZYzN7
 		if ($result->error) {
 			echo "   error while tweeting: ".$result->error."\n";
+			$errors[] = "Error while tweeting: ".$result->error;
 			$tweetError = 1;
 		}
 
@@ -114,6 +121,7 @@ if ($connection->error || !$fbuser) {
 			$result = mysql_query("UPDATE qotd_settings SET value='$today' WHERE name='lastTweet'", $con);
 			if (!$result) {
 				echo "   error while saving tweet: ".mysql_error()."\n";
+				$errors[] = "Error while saving tweet: ".mysql_error();
 			}
 		}
 	} else {
@@ -145,6 +153,7 @@ if ($connection->error || !$fbuser) {
 
 		} catch (FacebookApiException $e) {
 			echo "   error while posting to Facebook: ". $e->getMessage()."\n";
+			$errors[] = "Error while posting to Facebook: ". $e->getMessage();
 			$fbError = 1;
 		}
 
@@ -159,6 +168,7 @@ if ($connection->error || !$fbuser) {
 			echo "   Posted on Facebook\n";
 		} catch (FacebookApiException $e) {
 			echo "   error while posting to Facebook: ". $e->getMessage()."\n";
+			$errors[] = "Error while posting to Facebook: ". $e->getMessage();
 			$fbError = 1;
 	        }
 		*/
@@ -169,6 +179,7 @@ if ($connection->error || !$fbuser) {
 			$result = mysql_query("UPDATE qotd_settings SET value='$today' WHERE name='lastFBPost'", $con);
 			if (!$result) {
 				echo "   error while saving post: ".mysql_error()."\n";
+				$errors[] = "Error  while saving post: ".mysql_error();
 			}
 		}
 	} else {
@@ -184,6 +195,28 @@ if ($connection->error || !$fbuser) {
 mysql_close($con);
 
 echo "</pre>";
+
+if (count($errors)) {
+	$errors[] = "-------------------------";
+	$errors[] = "DBNAME=".DBNAME;
+	$errors[] = "DBLOGIN=".DBLOGIN;
+        $errors[] = "DBPASSWD=".DBPASSWD;
+        $errors[] = "DBHOST=".DBHOST;
+        $errors[] = "DBPORT=".DBPORT;
+        $errors[] = "CONSUMER_KEY=".CONSUMER_KEY;
+        $errors[] = "CONSUMER_SECRET=".CONSUMER_SECRET;
+        $errors[] = "ACCESS_TOKEN=".ACCESS_TOKEN;
+        $errors[] = "ACCESS_TOKEN_SECRET=".ACCESS_TOKEN_SECRET;
+        $errors[] = "FB_APP_ID=".FB_APP_ID;
+        $errors[] = "FB_APP_SECRET=".FB_APP_SECRET;
+        $errors[] = "FB_CLIENT_TOKEN=".FB_CLIENT_TOKEN;
+        $errors[] = "FB_ACCESS_TOKEN=".FB_ACCESS_TOKEN;
+        $errors[] = "FB_PAGE_ID=".FB_PAGE_ID;
+        $errors[] = "FB_PAGE_ACCESS_TOKEN=".FB_PAGE_ACCESS_TOKEN;
+
+	sendEmail("Errors occurred", join("\r\n", $errors));
+}
+
 return;
 
 function getTweet($con) {
@@ -274,6 +307,19 @@ function addTags($text, $tags) {
 function sanitize($s) {
 	$s = utf8_encode($s);
 	return html_entity_decode($s);
+}
+
+function sendEmail($subject, $body) {
+	$recipients = array(
+		'ralph.schuster@dlh.de',
+		'fqotdbot@ralph-schuster.eu'
+	);
+	$additionalHeaders = 'From: fqotdbot@ralph-schuster.eu';
+
+	foreach ($recipients AS $to) {
+		mail($to, "FQOTDBOT: $subject", $body, $additionalHeaders);
+	}
+
 }
 
 ?>
