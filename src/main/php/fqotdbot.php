@@ -187,7 +187,7 @@ if ($connection->error || !$fbuser) {
 	}
 
 	// Save RSS Feed
-	$rssFeed->addQuote($GLOBALS['fqotd']);
+	$rssFeed->addQuote($quote);
 	$rssFeed->save();
 }
 
