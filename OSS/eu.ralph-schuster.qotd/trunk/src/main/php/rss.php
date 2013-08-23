@@ -22,7 +22,7 @@ class RssFeed {
 	function loadQuotes() {
 		$result = mysql_query("SELECT * FROM qotd_settings WHERE name='rssContent'");
 		if ($result) {
-			$ids = mysql_fetch_array($result);
+			$ids = mysql_fetch_assoc($result);
 			$ids = array_reverse(preg_split('/,/', $ids['value']));
 			$this->addItems($ids);
 		}
@@ -30,14 +30,24 @@ class RssFeed {
 
 	function addQuote($quote) {
 		if ($quote !== FALSE) {
-			$this->quotes[] = $quote;
+			// Check that we don't have quote yet
+			$found = 0;
+			foreach ($this->quotes AS $q) {
+				if ($q['id'] == $quote['id']) {
+					$found = 1;
+				}
+			}
+
+			if (!$found) {
+				$this->quotes[] = $quote;
+			}
 		}
 	}
 
 	function &getQuote($id) {
 		$result = mysql_query("SELECT * FROM qotd_quotes WHERE id=$id", $this->connection);
 		if ($result) {
-			$quote = mysql_fetch_array($result);
+			$quote = mysql_fetch_assoc($result);
 			return $quote;
 		}
 		return FALSE;
