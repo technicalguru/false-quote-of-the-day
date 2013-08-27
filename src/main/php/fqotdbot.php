@@ -105,8 +105,8 @@ if ($connection->error || !$fbuser) {
 		// Twitter it
 		echo "Not twittered yet...\n";
 		$tweettext = addTags("$quote[quote] ($quote[author])", $quote['hashtags']);
-		echo "   Twittering: $tweettext\n";
-		$result = $connection->post('statuses/update', array('status' => sanitize($tweettext)));
+		echo html_entity_decode("   Twittering: $tweettext\n");
+		$result = $connection->post('statuses/update', array('status' => html_entity_decode($tweettext)));
  		// http://bit.ly/XZYzN7
 		if ($result->error) {
 			echo "   error while tweeting: ".$result->error."\n";
