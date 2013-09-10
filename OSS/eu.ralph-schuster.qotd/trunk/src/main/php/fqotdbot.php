@@ -249,7 +249,7 @@ function getTweet($con) {
 	} else {
 		$lastTweet = date("Ymd", time() - 86400); // Yesterday
 	}
-	$rc['tweeted'] = $lastTweet == date("Ymd", time());
+	$rc['tweeted'] = $lastTweet == $settings['currentDay'];
 
 	// Was it posted on Facebook?
 	$result = mysql_query("SELECT * FROM qotd_settings WHERE name='lastFBPost'", $con);
@@ -262,7 +262,7 @@ function getTweet($con) {
 	} else {
 		$lastFBPost = date("Ymd", time() - 86400); // Yesterday
 	}
-	$rc['facebookPosted'] = $lastFBPost == date("Ymd", time());
+	$rc['facebookPosted'] = $lastFBPost == $settings['currentDay'];
 
 	$rc['quote'] = utf8_encode($rc['quote']);
 	$rc['author'] = utf8_encode($rc['author']);
