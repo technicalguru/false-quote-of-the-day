@@ -14,6 +14,7 @@ CREATE TABLE qotd_quotes (
 	quote  VARCHAR(200)          NOT NULL,
 	author VARCHAR(200)          NOT NULL,
 	last_usage TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	exclude INT(5) UNSIGNED DEFAULT 0,
 	
 	PRIMARY KEY(id)
 ) ENGINE=InnoDB;
