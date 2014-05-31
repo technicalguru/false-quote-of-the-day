@@ -59,7 +59,7 @@ sub getquote {
 		}
 	} else {
 		# Find a new quote by selecting minimum last day with minimum id
-		$sth = $DBH->prepare("SELECT * FROM qotd_quotes ORDER BY last_usage, id");
+		$sth = $DBH->prepare("SELECT * FROM qotd_quotes WHERE exclude=0 ORDER BY last_usage, id");
 		$sth->execute();
 		if ($row = $sth->fetchrow_hashref()) {
 			$quote  = $$row{'quote'};
